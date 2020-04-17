@@ -56,6 +56,15 @@ app.post("/begin/newExpense", (req, res) => {
   res.redirect("/begin")
 });
 
+// app.post("/begin/income_:index/delete", (req, res) => {
+
+//})
+
+// app.post("/begin/expense_:index/delete", (req, res) => {
+
+//})
+
+
 app.listen(3000, "localhost", () => {
   console.log("Listening to port 3000.");
 });

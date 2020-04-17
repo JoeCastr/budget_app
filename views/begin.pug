@@ -24,12 +24,17 @@ html
               label(for="incomeAmount") Enter the income amount:
             dd
               input(type="text" id="incomeAmount" name="incomeAmount")
-            input(type="submit" value="Enter")
-            button.delete(formaction="/begin" formmethod="get") Delete
+            input.button.income(type="submit" value="Enter")
 
             div.income-list
-              each source in sources
-                p #{source.name} #{source.amount}
+              each source, index in sources
+                ul.listed-items
+                  li
+                    p #{source.name} #{source.amount}
+                  li
+                    a(href=`begin/income_${index}/delete`)
+                      img(src="/images/delete.png" alt="delete this item")
+
 
         div.expense-container
         
@@ -44,12 +49,16 @@ html
               label(for="expenseAmount") Enter the expense amount:
             dd
               input(type="text" id="expenseAmount" name="expenseAmount")
-            input(type="submit" value="Enter")
-            button.delete(formaction="/begin" formmethod="get") Delete
+            input.button.expense(type="submit" value="Enter")
 
             div.expense-list
-              each expense in expenses
-                p #{expense.name} #{expense.amount}
+              each expense, index in expenses
+                ul.listed-items
+                  li
+                    p #{expense.name} #{expense.amount}
+                  li
+                    a(href=`begin/expense_${index}/delete`)
+                      img(src="/images/delete.png" alt="delete this item")
 
       div.result-container
         div

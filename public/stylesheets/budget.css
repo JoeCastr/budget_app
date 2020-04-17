@@ -16,6 +16,7 @@ body {
   height: 1000px;
   font-family: Arial;
   background-color: #BEFF9F;
+  margin: auto;
 }
 
 .main-container {
@@ -27,18 +28,26 @@ body {
   text-align: center;
 }
 
+.income-container h2 {
+  margin-bottom: 20px;
+}
+
 .expense-container {
   text-align: center;
 }
 
+.expense-container h2 {
+  margin-bottom: 20px;
+}
+
 .income-list {
-  margin-top: 15px;
+  margin-top: 20px;
   border: 5px solid green;
   border-radius: 5px;
 }
 
 .expense-list {
-  margin-top: 15px;
+  margin-top: 20px;
   border: 5px solid #FF9494;
   border-radius: 5px;
 }
@@ -56,4 +65,39 @@ body {
 
 dt, dd, h2 {
   margin-bottom: 5px;
+}
+
+.button {
+  border-style: none;
+  padding: 15px 15px 15px;
+  border-radius: 7px;
+}
+
+.button.income {
+  background-color: green;
+  color: white;
+}
+
+.button.expense {
+  background-color: #FF9494;
+  color: white;
+}
+
+.button:hover {
+  cursor: pointer;
+}
+
+.listed-items li {
+  display: inline;
+  display: inline-block;
+  list-style: none;
+}
+
+.listed-items p {
+  font-size: 20px;
+}
+
+.listed-items img {
+  width: 15px;
+  height: 15px;
 }
