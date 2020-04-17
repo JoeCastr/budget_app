@@ -1,0 +1,59 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.header {
+  margin: auto;
+  text-align: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+body {
+  width: 1000px;
+  height: 1000px;
+  font-family: Arial;
+  background-color: #BEFF9F;
+}
+
+.main-container {
+  display: flex;
+  justify-content: space-around;
+}
+
+.income-container {
+  text-align: center;
+}
+
+.expense-container {
+  text-align: center;
+}
+
+.income-list {
+  margin-top: 15px;
+  border: 5px solid green;
+  border-radius: 5px;
+}
+
+.expense-list {
+  margin-top: 15px;
+  border: 5px solid #FF9494;
+  border-radius: 5px;
+}
+
+.result-container, .number-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.number-container {
+  color: #F35757;
+  font-size: 40px;
+}
+
+dt, dd, h2 {
+  margin-bottom: 5px;
+}

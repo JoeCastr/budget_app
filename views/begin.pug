@@ -1,0 +1,59 @@
+doctype html
+
+html
+  head
+    title This is the page title
+    meta(charset="UTF-8")
+    link(rel="stylesheet" href="/stylesheets/budget.css")
+  body
+    header
+      div.header
+        img(src="images/money.png" alt="Money Finder budget calculator")
+
+      main.main-container
+        div.income-container
+
+          h2 Income:
+
+          form(action="begin/newSource" method="post")
+            dt
+              label(for="incomeSourceName") Enter the income source's name:
+            dd
+              input(type="text" id="incomeSourceName" name="incomeSourceName")
+            dt
+              label(for="incomeAmount") Enter the income amount:
+            dd
+              input(type="text" id="incomeAmount" name="incomeAmount")
+            input(type="submit" value="Enter")
+            button.delete(formaction="/begin" formmethod="get") Delete
+
+            div.income-list
+              each source in sources
+                p #{source.name} #{source.amount}
+
+        div.expense-container
+        
+          h2 Expenses:
+
+          form(action="begin/newExpense" method="post")
+            dt
+              label(for="expenseSourceName") Enter the expense source's name:
+            dd
+              input(type="text" id="expenseSourceName" name="expenseSourceName")
+            dt
+              label(for="expenseAmount") Enter the expense amount:
+            dd
+              input(type="text" id="expenseAmount" name="expenseAmount")
+            input(type="submit" value="Enter")
+            button.delete(formaction="/begin" formmethod="get") Delete
+
+            div.expense-list
+              each expense in expenses
+                p #{expense.name} #{expense.amount}
+
+      div.result-container
+        div
+          h2 Net Income:
+      div.number-container  
+        div
+          p #{total}
