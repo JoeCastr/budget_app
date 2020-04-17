@@ -53,16 +53,20 @@ app.post("/begin/newExpense", (req, res) => {
     amount: expenseAmount, 
   });
 
-  res.redirect("/begin")
+  res.redirect("/begin");
 });
 
-// app.post("/begin/income_:index/delete", (req, res) => {
+app.get("/begin/income_:index/delete", (req, res) => {
+  incomeSources.splice((req.params.index), 1);
 
-//})
+  res.redirect("/begin");
+})
 
-// app.post("/begin/expense_:index/delete", (req, res) => {
+app.get("/begin/expense_:index/delete", (req, res) => {
+  expenseSources.splice((req.params.index), 1);
 
-//})
+  res.redirect("/begin");
+})
 
 
 app.listen(3000, "localhost", () => {
