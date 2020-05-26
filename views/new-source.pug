@@ -5,13 +5,12 @@ block content
 
   form(action="/newSource" method="post")
     dt
-      label(for="incomeSourceName") Enter the income source's name:
+      label(for="incomeSourceName" class="enter-name") Enter the income source's name:
     dd
       input(type="text" id="incomeSourceName" name="incomeSourceName")
     dt
-      label(for="incomeAmount") Enter the income amount without commas or currency symbols
+      label(for="incomeAmount" class="enter-amount") Enter the income amount without commas or currency symbols
     dd
       input(type="text" id="incomeAmount" name="incomeAmount" placeholder="0.00")
     input.button.income(type="submit" value="Enter") 
-    dd
-      button.cancel(formaction="/begin" formmethod="get") Cancel
+    button.cancel(formaction="/begin" formmethod="get") Cancel
