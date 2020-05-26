@@ -1,0 +1,17 @@
+extends layout
+
+block content
+
+
+  form(action="/newExpense" method="post")
+    dt
+      label(for="expenseSourceName") Enter the expense source's name:
+    dd
+      input(type="text" id="expenseSourceName" name="expenseSourceName")
+    dt
+      label(for="expenseAmount") Enter the expense amount without commas or currency symbols:
+    dd
+      input(type="text" id="expenseAmount" name="expenseAmount" placeholder="0.00")
+    input.button.expense(type="submit" value="Enter")
+    dt
+      button.cancel(formaction="/begin" formmethod="get") Cancel

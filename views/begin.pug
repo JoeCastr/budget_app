@@ -1,68 +1,44 @@
-doctype html
+extends layout
 
-html
-  head
-    title This is the page title
-    meta(charset="UTF-8")
-    link(rel="stylesheet" href="/stylesheets/budget.css")
-  body
-    header
-      div.header
-        img(src="images/money.png" alt="Money Finder budget calculator")
+block content
 
-      main.main-container
-        div.income-container
+    main.main-container
 
-          h2 Income:
+      div.income-container
 
-          form(action="begin/newSource" method="post")
-            dt
-              label(for="incomeSourceName") Enter the income source's name:
-            dd
-              input(type="text" id="incomeSourceName" name="incomeSourceName")
-            dt
-              label(for="incomeAmount") Enter the income amount:
-            dd
-              input(type="text" id="incomeAmount" name="incomeAmount")
-            input.button.income(type="submit" value="Enter")
+        h2 Income:
 
-            div.income-list
+          div.income-list
+            if sources && sources.length > 0
               each source, index in sources
                 ul.listed-items
                   li
-                    p #{source.name} #{source.amount}
+                    p #{source.name} $ #{source.amount}
                   li
                     a(href=`begin/income_${index}/delete`)
                       img(src="/images/delete.png" alt="delete this item")
+          a(href="/newSource" class="new-source") Add income
 
 
-        div.expense-container
+      div.expense-container
         
           h2 Expenses:
-
-          form(action="begin/newExpense" method="post")
-            dt
-              label(for="expenseSourceName") Enter the expense source's name:
-            dd
-              input(type="text" id="expenseSourceName" name="expenseSourceName")
-            dt
-              label(for="expenseAmount") Enter the expense amount:
-            dd
-              input(type="text" id="expenseAmount" name="expenseAmount")
-            input.button.expense(type="submit" value="Enter")
-
+            
             div.expense-list
-              each expense, index in expenses
-                ul.listed-items
-                  li
-                    p #{expense.name} #{expense.amount}
-                  li
-                    a(href=`begin/expense_${index}/delete`)
-                      img(src="/images/delete.png" alt="delete this item")
+              if expenses && expenses.length > 0
+                each expense, index in expenses
+                  ul.listed-items
+                    li
+                      p #{expense.name} $ #{expense.amount}
+                    li
+                      a(href=`begin/expense_${index}/delete`)
+                        img(src="/images/delete.png" alt="delete this item")
+          a(href="/newExpense" class="new-expense") Add expense
 
-      div.result-container
-        div
-          h2 Net Income:
-      div.number-container  
-        div
-          p #{total}
+
+    div.result-container
+      div
+        h2 Net Income:
+    div.number-container  
+      div
+        p $ #{total.toFixed(2)}

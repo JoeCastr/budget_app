@@ -1,0 +1,21 @@
+doctype html
+
+html
+  head
+    title Money Finder
+    meta(charset="UTF-8")
+    link(rel="stylesheet" href="/stylesheets/budget.css")
+  body
+    header
+      div.header
+        img(src='images/money.png')
+
+    - let messageTypes = Object.keys(flash || {});
+    if messageTypes.length > 0
+      ul
+        each messageType in messageTypes
+          each message in flash[messageType]
+            li.flash(class=messageType)= message
+            
+  block content
+
