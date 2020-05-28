@@ -5,6 +5,7 @@ const flash = require('express-flash');
 const session = require('express-session');
 const store = require('connect-loki');
 const { body, validationResult } = require('express-validator');
+const PgPersistence = require("./lib/pg-persistence");
 
 const LokiStore = store(session);
 
@@ -36,8 +37,8 @@ const validateSource = (source, whichArg) => {
 
 const validateAmount = (amount) => {
   return body(amount)
-    .matches(/\d*\.{0,1}\d*/)
-    .withMessage("Invalid number format. Use 0.00");
+    .matches(/\d+\.{0,1}\d*/)
+    .withMessage("Please enter a number greater than .00");
 };
 
 app.use(express.static("public"));
@@ -83,6 +84,20 @@ app.use((req, res, next) => {
   delete req.session.flash;
   next();
 });
+app.use((req, res, next) => {
+  res.locals.store = new PgPersistence(req.session);
+  next();
+});
+
+// app.use(async (req, res) => {
+//   try {
+//     await res.locals.store.testQuery1();
+//     await res.locals.store.testQuery2();
+//     res.send("quitting");
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 
 app.set("views", "./views");
 app.set("view engine", "pug");

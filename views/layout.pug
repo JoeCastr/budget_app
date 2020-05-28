@@ -10,12 +10,12 @@ html
       div.header
         img(src='images/money.png')
 
-    - let messageTypes = Object.keys(flash || {});
-    if messageTypes.length > 0
-      ul
-        each messageType in messageTypes
-          each message in flash[messageType]
-            li.flash(class=messageType)= message
+        - let messageTypes = Object.keys(flash || {});
+        if messageTypes.length > 0
+          ul.err-msg
+            each messageType in messageTypes
+              each message in flash[messageType]
+                li.flash(class=messageType)= message
             
   block content
 

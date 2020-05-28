@@ -12,6 +12,10 @@
   padding-bottom: 20px;
 }
 
+.header img {
+  padding-bottom: 10px;
+}
+
 body {
   width: 1000px;
   height: 1000px;
@@ -47,6 +51,11 @@ body {
   margin-top: 20px;
   border: 5px solid green;
   border-radius: 5px;
+}
+
+form label, input, button {
+  padding-bottom: 5px;
+  font-size: 20px;
 }
 
 .income-list:empty {
@@ -93,7 +102,32 @@ body {
 }
 
 dt, dd, h2 {
-  margin-bottom: 5px;
+  margin-bottom: 12px;
+}
+
+/*.err-msg {
+  background-color: #FF4545;
+  color: #FAFAFA;
+  list-style: none;
+  font-weight: bold;
+  border-radius: 7px;
+  border: black 2px solid;
+}*/
+
+.err-msg {
+  margin: auto;
+}
+
+.error {
+  background-color: #FF4545;
+  color: #FAFAFA;
+  list-style: none;
+  font-weight: bold;
+  border-radius: 7px;
+  border: black 2px solid;
+  text-align: center;
+  max-width: 375px;
+  font-size: 20px;
 }
 
 .expense-name {
