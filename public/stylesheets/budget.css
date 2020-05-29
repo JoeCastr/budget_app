@@ -174,3 +174,44 @@ ul.flash {
   background-color: #F35757;
   
 }
+
+fieldset {
+  border: 0;
+}
+
+fieldset li {
+  background-color: blue;
+}
+
+.info {
+  background-color: #4FB3FF;
+  font-size: 20px;
+  list-style: none;
+  color: #FAFAFA;
+  list-style: none;
+  font-weight: bold;
+  border-radius: 7px;
+  border: black 2px solid;
+  text-align: center;
+  max-width: 375px;
+}
+
+.welcome {
+  font-size: 20px;
+}
+
+.sign-out {
+  border: none;
+  background-color: #D6D6D6;
+  border-radius: 7px;
+  padding: 15px;
+}
+
+.delete {
+  background-color: transparent;
+  border-style: none;
+}
+
+.delete:hover {
+  cursor: pointer;
+}

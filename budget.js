@@ -1,6 +1,9 @@
+const config = require("./lib/config");
 const express = require('express');
 const morgan = require('morgan');
 const app = express();
+const host = config.HOST;
+const port = config.PORT;
 const flash = require('express-flash');
 const session = require('express-session');
 const store = require('connect-loki');
@@ -41,7 +44,7 @@ app.use(session({
   name: "launch-school-contacts-manager-session-id",
   resave: false,
   saveUninitialized: true,
-  secret: "this is not very secure",
+  secret: config.SECRET,
   store: new LokiStore({}),
 }));
 
