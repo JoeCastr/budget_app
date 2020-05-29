@@ -13,10 +13,11 @@ block content
               each source, index in sources
                 ul.listed-items
                   li
-                    p #{source.name} $ #{source.amount}
+                    p #{source.source_name} $ #{source.source_amount}
                   li
-                    a(href=`begin/income_${index}/delete`)
-                      img(src="/images/delete.png" alt="delete this item")
+                    form.delete(action=`/begin/income_${source.id}/delete` method="post")
+                      button.delete(type="submit")
+                        img(src="/images/delete.png")
         a(href="/newSource" class="new-source") Add income
 
 
@@ -29,10 +30,11 @@ block content
                 each expense, index in expenses
                   ul.listed-items
                     li
-                      p #{expense.name} $ #{expense.amount}
+                      p #{expense.expense_name} $ #{expense.expense_amount}
                     li
-                      a(href=`begin/expense_${index}/delete`)
-                        img(src="/images/delete.png" alt="delete this item")
+                      form.delete(action=`/begin/expense_${expense.id}/delete` method="post")
+                        button.delete(type="submit")
+                           img(src="/images/delete.png")
           a(href="/newExpense" class="new-expense") Add expense
 
 
@@ -41,4 +43,4 @@ block content
         h2 Net Income:
     div.number-container  
       div
-        p $ #{total.toFixed(2)}
+        p $ #{total}

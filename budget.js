@@ -6,21 +6,9 @@ const session = require('express-session');
 const store = require('connect-loki');
 const { body, validationResult } = require('express-validator');
 const PgPersistence = require("./lib/pg-persistence");
+const catchError = require("./lib/catch-error");
 
 const LokiStore = store(session);
-
-const incomeSources = [];
-const expenseSources = [];
-
-function totals(sources, type) {
-  let result = 0;
-  for (let idx = 0; idx < sources.length; idx += 1) {
-    result += Number(sources[idx][String(type)]);
-  }
-  return result;
-}
-
-const net = totals(incomeSources, "sourceAmount") - totals(expenseSources, "expenseAmount");
 
 const validateSource = (source, whichArg) => {
   return body(source)
@@ -37,7 +25,21 @@ const validateSource = (source, whichArg) => {
 
 const validateAmount = (amount) => {
   return body(amount)
-    .matches(/\d+\.{0,1}\d*/)
+    // .matches(/\d+\.{0,1}\d*/)
+    // .withMessage("Please enter a number greater than .00")
+    // .bail()
+    // .not()
+    // .matches(/.*\,.*/)
+    // .withMessage("Please do not use commas")
+    // .bail()
+    // .matches(/\d+/)
+    // .withMessage("Please enter numbers only")
+
+
+    // This line is the one I am having problems with.
+    // Entries with non-numeric characters like "1*" or "1," will get through
+    // even though they shouldn't
+    .custom((val) => (/\d+\.{0,1}\d*/).test(val)) /
     .withMessage("Please enter a number greater than .00");
 };
 
@@ -89,16 +91,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.use(async (req, res) => {
-//   try {
-//     await res.locals.store.testQuery1();
-//     await res.locals.store.testQuery2();
-//     res.send("quitting");
-//   } catch (error) {
-//     next(error);
-//   }
-// });
-
 app.set("views", "./views");
 app.set("view engine", "pug");
 
@@ -106,19 +98,25 @@ app.get("/", (req, res) => {
   res.redirect("/begin");
 });
 
-app.get("/begin", (req, res) => {
-  console.log(req.flash())
-  res.render("begin", {
-    flash: req.flash(),
-    sources: req.session.incomeSources,
-    expenses: req.session.expenseSources,
-    total: totals(req.session.incomeSources, "amount") - totals(req.session.expenseSources, "amount"),
-  });
-});
+app.get("/begin",
+  catchError(async (req, res) => {
+    let store = res.locals.store;
+    let expense_list = await store.loadExpenseList();
+    let income_list = await store.loadIncomeList();
+    let total = await store.total(income_list, expense_list);
+
+    res.render("begin", {
+      flash: req.flash(),
+      sources: income_list,
+      expenses: expense_list,
+      total: total,
+    });
+  }),
+);
 
 app.get("/newSource", (req, res) => {
   res.render("new-source");
-})
+});
 
 app.post("/newSource",
   [
@@ -126,36 +124,30 @@ app.post("/newSource",
     validateAmount("incomeAmount"),
   ],
 
-  (req, res, next) => {
+  catchError(async (req, res) => {
     let errors = validationResult(req);
-
+    let store = res.locals.store;
+    let income_list = await store.loadIncomeList();
+    
     if (!errors.isEmpty()) {
-      errors.array().forEach(error => req.flash("error", error.msg));
+      errors.array().forEach((error) => req.flash("error", error.msg));
       res.render("new-source", {
         flash: req.flash(),
-        incomeSources: req.session.incomeSources,
+        incomeSources: income_list, // change to db
       });
     } else {
-      next();
+      // need to format number before putting in database
+      let incomeAmount = Number(req.body.incomeAmount).toFixed(2);
+      let incomeSourceName = req.body.incomeSourceName;
+      await store.updateIncomeList(incomeSourceName, incomeAmount);
+      res.redirect("begin");
     }
-  },
-
-  (req, res) => {
-    let incomeName = req.body.incomeSourceName;
-    let incomeAmount = req.body.incomeAmount;
-    req.session.incomeSources.push({ 
-      name: incomeName,
-      amount: Number(incomeAmount).toFixed(2),
-    });
-
-    req.flash("success", "Income source added");
-    // console.log(incomeSources);
-    res.redirect("/begin");
-  });
+  }),
+);
 
 app.get("/newExpense", (req, res) => {
   res.render("new-expense");
-})
+});
 
 app.post("/newExpense", 
   [
@@ -163,45 +155,54 @@ app.post("/newExpense",
     validateAmount("expenseAmount"),
   ],
 
-  (req, res, next) => {
+  catchError(async (req, res) => {
     let errors = validationResult(req);
+    let store = res.locals.store;
+    let expense_list = await store.loadExpenseList();
 
     if (!errors.isEmpty()) {
-      errors.array().forEach(error => req.flash("error", error.msg));
-      res.render("new-source", {
+      errors.array().forEach((error) => req.flash("error", error.msg));
+      res.render("new-expense", {
         flash: req.flash(),
-        errorMessages: errors.array().map((error) => error.msg),
-        expenseSources: req.session.expenseSources,
+        expenseSources: expense_list, // change to db
       });
     } else {
-      next();
+      // need to format number before putting in database
+      let expenseAmount = Number(req.body.expenseAmount).toFixed(2);
+      let expenseSourceName = req.body.expenseSourceName;
+      await store.updateExpenseList(expenseSourceName, expenseAmount);
+      res.redirect("begin");
     }
-  },
-
-  (req, res) => {
-    let expenseName = req.body.expenseSourceName;
-    let expenseAmount = req.body.expenseAmount;
-    req.session.expenseSources.push({ 
-      name: expenseName,
-      amount: Number(expenseAmount).toFixed(2), 
-    });
-
-    req.flash("success", "Expense source added");
-    res.redirect("/begin");
-  }
+  }),
 );
 
-app.get("/begin/income_:index/delete", (req, res) => {
-  req.session.incomeSources.splice((req.params.index), 1);
+app.post("/begin/income_:incomeId/delete", 
+  // req.session.incomeSources.splice((req.params.index), 1);
+  catchError(async (req, res) => {
+    let store = res.locals.store;
+    let expense_list = await store.loadExpenseList();
+    let income_list = await store.loadIncomeList();
 
-  res.redirect("/begin");
-});
+    let incomeId = req.params.incomeId;
+    let deleted = await store.deleteIncomeSource(+incomeId);
+    if (!deleted) throw new Error("Not found.");
+    res.redirect("/begin");
+  }),
+);
 
-app.get("/begin/expense_:index/delete", (req, res) => {
-  req.session.expenseSources.splice((req.params.index), 1);
+app.post("/begin/expense_:expenseId/delete",
+  // req.session.expenseSources.splice((req.params.index), 1);
+  catchError(async (req, res) => {
+    let store = res.locals.store;
+    let expense_list = await store.loadExpenseList();
+    let income_list = await store.loadIncomeList();
 
-  res.redirect("/begin");
-});
+    let expenseId = req.params.expenseId;
+    let deleted = await store.deleteExpenseSource(+expenseId);
+    if (!deleted) throw new Error("Not found.");
+    res.redirect("/begin");
+  }),
+);
 
 
 app.listen(3000, "localhost", () => {
