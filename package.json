@@ -6,6 +6,7 @@
   "scripts": {
     "start": "npx nodemon budget.js",
     "heroku-postbuild": "npm install --production",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
@@ -29,6 +30,6 @@
   },
   "engines": {
     "node": "10.20.1",
-    "npm": "6.12.1",
+    "npm": "6.14.4"
   }
 }
