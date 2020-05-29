@@ -16,9 +16,10 @@ block content
                     p #{source.source_name} $ #{source.source_amount}
                   li
                     form.delete(action=`/begin/income_${source.id}/delete` method="post")
-                      button.delete(type="submit")
+                       button.delete(type="submit")
                         img(src="/images/delete.png")
-        a(href="/newSource" class="new-source") Add income
+        if signedIn
+          a(href="/newSource" class="new-source") Add income
 
 
       div.expense-container
@@ -35,7 +36,9 @@ block content
                       form.delete(action=`/begin/expense_${expense.id}/delete` method="post")
                         button.delete(type="submit")
                            img(src="/images/delete.png")
-          a(href="/newExpense" class="new-expense") Add expense
+
+          if signedIn
+            a(href="/newExpense" class="new-expense") Add expense
 
 
     div.result-container

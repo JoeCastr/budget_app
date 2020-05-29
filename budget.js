@@ -25,22 +25,8 @@ const validateSource = (source, whichArg) => {
 
 const validateAmount = (amount) => {
   return body(amount)
-    // .matches(/\d+\.{0,1}\d*/)
-    // .withMessage("Please enter a number greater than .00")
-    // .bail()
-    // .not()
-    // .matches(/.*\,.*/)
-    // .withMessage("Please do not use commas")
-    // .bail()
-    // .matches(/\d+/)
-    // .withMessage("Please enter numbers only")
-
-
-    // This line is the one I am having problems with.
-    // Entries with non-numeric characters like "1*" or "1," will get through
-    // even though they shouldn't
-    .custom((val) => (/\d+\.{0,1}\d*/).test(val)) /
-    .withMessage("Please enter a number greater than .00");
+    .custom((val) => (/\d+\.{0,1}\d*/).test(Number(val).toFixed(2)))
+    .withMessage("Please enter a number greater than .00 without commas");
 };
 
 app.use(express.static("public"));
@@ -82,6 +68,8 @@ app.use((req, res, next) => {
 app.use(express.urlencoded({ extended: false }));
 app.use(flash());
 app.use((req, res, next) => {
+  res.locals.username = req.session.username;
+  res.locals.signedIn = req.session.signedIn;
   res.locals.flash = req.session.flash;
   delete req.session.flash;
   next();
@@ -94,16 +82,26 @@ app.use((req, res, next) => {
 app.set("views", "./views");
 app.set("view engine", "pug");
 
+const requiresAuthentication = (req, res, next) => {
+  if (!res.locals.signedIn) {
+    res.redirect(302, "/signin");
+  } else {
+    next();
+  }
+}
+
 app.get("/", (req, res) => {
   res.redirect("/begin");
 });
 
 app.get("/begin",
+  requiresAuthentication,
   catchError(async (req, res) => {
     let store = res.locals.store;
+    let username = req.session.username;
     let expense_list = await store.loadExpenseList();
     let income_list = await store.loadIncomeList();
-    let total = await store.total(income_list, expense_list);
+    let total = await store.total();
 
     res.render("begin", {
       flash: req.flash(),
@@ -114,11 +112,17 @@ app.get("/begin",
   }),
 );
 
-app.get("/newSource", (req, res) => {
+app.get("/newSource",
+
+requiresAuthentication,
+
+(req, res) => {
   res.render("new-source");
 });
 
 app.post("/newSource",
+  requiresAuthentication,
+
   [
     validateSource("incomeSourceName", "Source"),
     validateAmount("incomeAmount"),
@@ -145,11 +149,18 @@ app.post("/newSource",
   }),
 );
 
-app.get("/newExpense", (req, res) => {
+app.get("/newExpense",
+
+  requiresAuthentication,
+
+  (req, res) => {
   res.render("new-expense");
 });
 
-app.post("/newExpense", 
+app.post("/newExpense",
+
+  requiresAuthentication,
+
   [
     validateSource("expenseSourceName", "Source"),
     validateAmount("expenseAmount"),
@@ -177,7 +188,9 @@ app.post("/newExpense",
 );
 
 app.post("/begin/income_:incomeId/delete", 
-  // req.session.incomeSources.splice((req.params.index), 1);
+  
+  requiresAuthentication,
+
   catchError(async (req, res) => {
     let store = res.locals.store;
     let expense_list = await store.loadExpenseList();
@@ -191,7 +204,9 @@ app.post("/begin/income_:incomeId/delete",
 );
 
 app.post("/begin/expense_:expenseId/delete",
-  // req.session.expenseSources.splice((req.params.index), 1);
+
+  requiresAuthentication,
+
   catchError(async (req, res) => {
     let store = res.locals.store;
     let expense_list = await store.loadExpenseList();
@@ -203,6 +218,41 @@ app.post("/begin/expense_:expenseId/delete",
     res.redirect("/begin");
   }),
 );
+
+app.get("/signIn", (req, res) => {
+  req.flash("info", "Please sign in.");
+  res.render("signin", {
+    flash:req.flash(),
+  });
+});
+
+app.post("/signIn", 
+  catchError(async (req, res) => {
+  let userName = req.body.userName.trim();
+  let password = req.body.password;
+
+  let authenticated = await res.locals.store.authenticate(userName, password);
+  if (!authenticated) {
+    req.flash("error", "Invalid credentials.");
+    res.render("signin", {
+      flash: req.flash(),
+      username: req.body.userName,
+    });
+  } else {
+    let session = req.session
+    session.username = userName;
+    session.signedIn = true;
+    req.flash("info", "Welcome!");
+    res.redirect("/begin");
+  }
+  }),
+);
+
+app.post("/signout", (req, res) => {
+  delete req.session.username;
+  delete req.session.signedIn;
+  res.redirect("/begin");
+})
 
 
 app.listen(3000, "localhost", () => {
