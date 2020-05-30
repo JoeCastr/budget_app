@@ -261,6 +261,7 @@ app.post("/signout", (req, res) => {
   res.redirect("/begin");
 });
 
-app.listen(3000, "localhost", () => {
+app.listen(port, () => {
   console.log("Listening to port 3000.");
 });
+
