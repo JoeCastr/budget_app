@@ -22,10 +22,11 @@ html
     block signIn
       if signedIn
         form(action="/signout" method="post")
-          p.welcome Welcome, #{username}
-          button.sign-out Sign Out
+          fieldset.actions
+            p.welcome Welcome, #{username}
+            button.sign-out Sign Out
       else
-        form(action="signIn" method="get")
+        form(action="/signIn" method="get")
           fieldset.actions
             p You are not signed in.
             p To learn where your money went, please sign in first.

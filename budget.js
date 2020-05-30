@@ -34,6 +34,7 @@ const validateAmount = (amount) => {
 
 app.use(express.static("public"));
 app.use(morgan("common"));
+app.use(express.urlencoded({ extended: false }));
 app.use(session({
   cookie: {
     httpOnly: true,
@@ -68,7 +69,7 @@ const clone = (object) => {
 //   next();
 // });
 
-app.use(express.urlencoded({ extended: false }));
+
 app.use(flash());
 app.use((req, res, next) => {
   res.locals.username = req.session.username;
@@ -92,9 +93,11 @@ const requiresAuthentication = (req, res, next) => {
   } else {
     next();
   }
-}
+};
 
-app.get("/", (req, res) => {
+app.get("/", 
+  requiresAuthentication,
+  (req, res) => {
   res.redirect("/begin");
 });
 
@@ -158,8 +161,9 @@ app.get("/newExpense",
   requiresAuthentication,
 
   (req, res) => {
-  res.render("new-expense");
-});
+    res.render("new-expense");
+  }
+);
 
 app.post("/newExpense",
 
@@ -191,8 +195,8 @@ app.post("/newExpense",
   }),
 );
 
-app.post("/begin/income_:incomeId/delete", 
-  
+app.post("/begin/income_:incomeId/delete",
+
   requiresAuthentication,
 
   catchError(async (req, res) => {
@@ -243,7 +247,7 @@ app.post("/signIn",
         username: req.body.userName,
       });
     } else {
-      let session = req.session
+      let session = req.session;
       session.username = userName;
       session.signedIn = true;
       req.flash("info", "Welcome!");
@@ -256,8 +260,7 @@ app.post("/signout", (req, res) => {
   delete req.session.username;
   delete req.session.signedIn;
   res.redirect("/begin");
-})
-
+});
 
 app.listen(3000, "localhost", () => {
   console.log("Listening to port 3000.");
