@@ -72,6 +72,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(flash());
 app.use((req, res, next) => {
   res.locals.username = req.session.username;
+  console.log(req.session.signedIn);
   res.locals.signedIn = req.session.signedIn;
   res.locals.flash = req.session.flash;
   delete req.session.flash;
@@ -87,7 +88,7 @@ app.set("view engine", "pug");
 
 const requiresAuthentication = (req, res, next) => {
   if (!res.locals.signedIn) {
-    res.redirect(302, "/signin");
+    res.redirect(302, "/signIn");
   } else {
     next();
   }
