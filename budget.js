@@ -52,21 +52,21 @@ const clone = (object) => {
   return JSON.parse(JSON.stringify(object));
 };
 
-app.use((req, res, next) => {
-  if (!("incomeSources" in req.session)) {
-    req.session.incomeSources = clone(incomeSources);
-  }
+// app.use((req, res, next) => {
+//   if (!("incomeSources" in req.session)) {
+//     req.session.incomeSources = clone(incomeSources);
+//   }
 
-  next();
-});
+//   next();
+// });
 
-app.use((req, res, next) => {
-  if (!("expenseSources" in req.session)) {
-    req.session.expenseSources = clone(incomeSources);
-  }
+// app.use((req, res, next) => {
+//   if (!("expenseSources" in req.session)) {
+//     req.session.expenseSources = clone(incomeSources);
+//   }
 
-  next();
-});
+//   next();
+// });
 
 app.use(express.urlencoded({ extended: false }));
 app.use(flash());
@@ -231,23 +231,23 @@ app.get("/signIn", (req, res) => {
 
 app.post("/signIn", 
   catchError(async (req, res) => {
-  let userName = req.body.userName.trim();
-  let password = req.body.password;
+    let userName = req.body.userName.trim();
+    let password = req.body.password;
 
-  let authenticated = await res.locals.store.authenticate(userName, password);
-  if (!authenticated) {
-    req.flash("error", "Invalid credentials.");
-    res.render("signin", {
-      flash: req.flash(),
-      username: req.body.userName,
-    });
-  } else {
-    let session = req.session
-    session.username = userName;
-    session.signedIn = true;
-    req.flash("info", "Welcome!");
-    res.redirect("/begin");
-  }
+    let authenticated = await res.locals.store.authenticate(userName, password);
+    if (!authenticated) {
+      req.flash("error", "Invalid credentials.");
+      res.render("signin", {
+        flash: req.flash(),
+        username: req.body.userName,
+      });
+    } else {
+      let session = req.session
+      session.username = userName;
+      session.signedIn = true;
+      req.flash("info", "Welcome!");
+      res.redirect("/begin");
+    }
   }),
 );
 
