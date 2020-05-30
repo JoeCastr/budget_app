@@ -2,8 +2,8 @@ const config = require("./lib/config");
 const express = require('express');
 const morgan = require('morgan');
 const app = express();
-const host = config.HOST;
-const port = config.PORT;
+const host = process.env.HOST;
+const port = process.env.PORT;
 const flash = require('express-flash');
 const session = require('express-session');
 const store = require('connect-loki');
@@ -21,7 +21,6 @@ const validateSource = (source, whichArg) => {
     .bail()
     .isLength({ max: 25 })
     .withMessage(`${whichArg} name is too long. Max length is 25 characters`)
-    // .isAlpha()
     .matches(/^[A-Za-z\s]+$/)
     .withMessage(`${whichArg} name may only contain alphabetic characters`);
 };
