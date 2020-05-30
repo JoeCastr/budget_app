@@ -44,7 +44,7 @@ app.use(session({
   name: "launch-school-contacts-manager-session-id",
   resave: false,
   saveUninitialized: true,
-  secret: config.SECRET,
+  secret: process.env.SECRET,
   store: new LokiStore({}),
 }));
 
