@@ -28,7 +28,9 @@ const validateSource = (source, whichArg) => {
 const validateAmount = (amount) => {
   return body(amount)
     .custom((val) => (/\d+\.{0,1}\d*/).test(Number(val).toFixed(2)))
-    .withMessage("Please enter a number greater than .00 without commas");
+    .withMessage("Please enter a number greater than .00 without commas")
+    .custom((val) => val >= .01)
+    .withMessage("Please enter a number greater than or equal to .01");
 };
 
 app.use(express.static("public"));
