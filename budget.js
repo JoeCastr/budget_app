@@ -36,7 +36,7 @@ app.use(morgan("common"));
 app.use(express.urlencoded({ extended: false }));
 app.use(session({
   cookie: {
-    httpOnly: true,
+    httpOnly: false,
     maxAge: 31 * 24 * 60 * 60 * 1000, // 31 days in milliseconds
     path: "/",
     secure: false,
@@ -44,7 +44,7 @@ app.use(session({
   name: "launch-school-contacts-manager-session-id",
   resave: false,
   saveUninitialized: true,
-  secret: process.env.SECRET,
+  secret: config.SECRET,
   store: new LokiStore({}),
 }));
 
@@ -80,14 +80,17 @@ app.use((req, res, next) => {
 });
 app.use((req, res, next) => {
   res.locals.store = new PgPersistence(req.session);
+  console.log("at app.use ( new PgPersistence(req.session) )")
   next();
 });
 
 app.set("views", "./views");
 app.set("view engine", "pug");
 
+console.log("before the const requiresAuthentication")
 const requiresAuthentication = (req, res, next) => {
   if (!res.locals.signedIn) {
+    console.log("declaring the requiresAuthentication const")
     res.redirect(302, "/signIn");
   } else {
     next();
@@ -97,7 +100,8 @@ const requiresAuthentication = (req, res, next) => {
 app.get("/", 
   requiresAuthentication,
   (req, res) => {
-  res.redirect("/begin");
+    console.log("at get / + after requiresAuthentication")
+    res.redirect("/begin");
 });
 
 app.get("/begin",
@@ -108,6 +112,7 @@ app.get("/begin",
     let expense_list = await store.loadExpenseList();
     let income_list = await store.loadIncomeList();
     let total = await store.total();
+    console.log(" /begin + after variable initializations")
 
     res.render("begin", {
       flash: req.flash(),
@@ -196,7 +201,7 @@ app.post("/newExpense",
 
 app.post("/begin/income_:incomeId/delete",
 
-  requiresAuthentication,
+  // requiresAuthentication,
 
   catchError(async (req, res) => {
     let store = res.locals.store;
@@ -212,7 +217,7 @@ app.post("/begin/income_:incomeId/delete",
 
 app.post("/begin/expense_:expenseId/delete",
 
-  requiresAuthentication,
+  // requiresAuthentication,
 
   catchError(async (req, res) => {
     let store = res.locals.store;
@@ -262,6 +267,6 @@ app.post("/signout", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log("Listening to port 3000.");
+  console.log(`Listening to port ${port}.`);
 });
 
