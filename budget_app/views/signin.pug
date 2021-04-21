@@ -1,0 +1,18 @@
+extends layout
+
+block content
+
+  form(action="/signIn" method="post")
+    dt
+      label(for="userName" class="username-label") Username:
+    dd
+      input(type="text" id="userName" name="userName" placeholder="a d m i n")
+    dt
+      label(for="password" class="password-label") Password:
+    dd
+      input(type="text" id="password" name="password" placeholder="s e c r e t")
+
+    fieldset.actions
+      input.button.income(type="submit" value="Sign In")
+
+block signIn
