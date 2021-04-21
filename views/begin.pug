@@ -1,0 +1,49 @@
+extends layout
+
+block content
+
+    main.main-container
+
+      div.income-container
+
+        h2 Income:
+
+          div.income-list
+            if sources && sources.length > 0
+              each source, index in sources
+                ul.listed-items
+                  li
+                    p #{source.source_name} $ #{source.source_amount}
+                  li
+                    form.delete(action=`/begin/income_${source.id}/delete` method="post")
+                       button.delete(type="submit")
+                        img(src="/images/delete.png")
+        if signedIn
+          a(href="/newSource" class="new-source") Add income
+
+
+      div.expense-container
+        
+          h2 Expenses:
+            
+            div.expense-list
+              if expenses && expenses.length > 0
+                each expense, index in expenses
+                  ul.listed-items
+                    li
+                      p #{expense.expense_name} $ #{expense.expense_amount}
+                    li
+                      form.delete(action=`/begin/expense_${expense.id}/delete` method="post")
+                        button.delete(type="submit")
+                           img(src="/images/delete.png")
+
+          if signedIn
+            a(href="/newExpense" class="new-expense") Add expense
+
+
+    div.result-container
+      div
+        h2 Net Income:
+    div.number-container  
+      div
+        p $ #{total}

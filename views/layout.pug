@@ -1,0 +1,35 @@
+doctype html
+
+html
+  head
+    title Money Finder
+    meta(charset="UTF-8")
+    link(rel="stylesheet" href="/stylesheets/budget.css")
+  body
+    header
+      div.header
+        img(src='images/money.png')
+
+        - let messageTypes = Object.keys(flash || {});
+        if messageTypes.length > 0
+          ul.err-msg
+            each messageType in messageTypes
+              each message in flash[messageType]
+                li.flash(class=messageType)= message
+
+
+  footer
+    block signIn
+      if signedIn
+        form(action="/signout" method="post")
+          fieldset.actions
+            p.welcome Welcome, #{username}
+            button.sign-out Sign Out
+      else
+        form(action="/signIn" method="get")
+          fieldset.actions
+            p You are not signed in.
+            p To learn where your money went, please sign in first.
+            button Sign In
+  block content
+

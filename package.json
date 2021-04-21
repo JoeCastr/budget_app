@@ -1,0 +1,35 @@
+{
+  "name": "budget_app_project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "budget.js",
+  "scripts": {
+    "start": "npx nodemon budget.js",
+    "heroku-postbuild": "npm install --production",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.2",
+    "nodemon": "^2.0.3"
+  },
+  "dependencies": {
+    "bcrypt": "^4.0.1",
+    "connect-loki": "^1.1.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-flash": "0.0.2",
+    "express-session": "^1.17.1",
+    "express-validator": "^6.5.0",
+    "morgan": "^1.10.0",
+    "pg": "^8.2.1",
+    "pug": "^2.0.4"
+  },
+  "engines": {
+    "node": "13.12.0",
+    "npm": "6.14.4"
+  }
+}
